@@ -1,14 +1,12 @@
 import { join } from "path"
-import mongoose from "mongoose"
-import usersRouter from "./api/users/index.js"
 import Express from "express";
 import listEndpoints from "express-list-endpoints";
 import cors from "cors";
 import mongoose from "mongoose";
 import {
-  badRequestHandler,
-  notFoundHandler,
-  genericErrorHandler,
+    badRequestHandler,
+    notFoundHandler,
+    genericErrorHandler,
 } from "./errorHandlers.js";
 import postRouter from "./api/posts/index.js";
 import usersRouter from "./api/users/index.js";
@@ -36,9 +34,9 @@ server.use(genericErrorHandler);
 mongoose.connect(process.env.MONGO_URL);
 
 mongoose.connection.on("connected", () => {
-  console.log("✅ Successfully connected to Mongo!");
-  server.listen(port, () => {
-    console.table(listEndpoints(server));
-    console.log(`✅ Server is running on port ${port}`);
-  });
+    console.log("✅ Successfully connected to Mongo!");
+    server.listen(port, () => {
+        console.table(listEndpoints(server));
+        console.log(`✅ Server is running on port ${port}`);
+    });
 });
