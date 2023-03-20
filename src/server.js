@@ -1,31 +1,42 @@
-import Express from "express"
-import listEndpoints from "express-list-endpoints"
-import cors from "cors"
-import mongoose from "mongoose"
-import { badRequestHandler, notFoundHandler, genericErrorHandler } from "./errorHandlers.js"
-import experiencesRouter from "./api/experiences/index.js";
 
-const server = Express()
-const port = process.env.PORT || 3001
+import experiencesRouter from "./api/experiences/index.js";
+import Express from "express";
+import listEndpoints from "express-list-endpoints";
+import cors from "cors";
+import mongoose from "mongoose";
+import {
+  badRequestHandler,
+  notFoundHandler,
+  genericErrorHandler,
+} from "./errorHandlers.js";
+import postRouter from "./api/posts/index.js";
+
+import usersRouter from "./api/users/index.js";
+
+const server = Express();
+const port = process.env.PORT || 3001;
 
 // **************************************** MIDDLEWARES *****************************************
-server.use(cors())
-server.use(Express.json())
+server.use(cors());
+server.use(Express.json());
 
 // ****************************************** ENDPOINTS *****************************************
 server.use("/users", experiencesRouter)
 
-// **************************************** ERROR HANDLERS **************************************
-server.use(badRequestHandler)
-server.use(notFoundHandler)
-server.use(genericErrorHandler)
+server.use("/posts", postRouter);
+server.use("/users", usersRouter);
 
-mongoose.connect(process.env.MONGO_URL)
+// **************************************** ERROR HANDLERS **************************************
+server.use(badRequestHandler);
+server.use(notFoundHandler);
+server.use(genericErrorHandler);
+
+mongoose.connect(process.env.MONGO_URL);
 
 mongoose.connection.on("connected", () => {
-    console.log("✅ Successfully connected to Mongo!")
-    server.listen(port, () => {
-        console.table(listEndpoints(server))
-        console.log(`✅ Server is running on port ${port}`)
-    })
-})
+  console.log("✅ Successfully connected to Mongo!");
+  server.listen(port, () => {
+    console.table(listEndpoints(server));
+    console.log(`✅ Server is running on port ${port}`);
+  });
+});
