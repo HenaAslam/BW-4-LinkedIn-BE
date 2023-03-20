@@ -20,7 +20,23 @@ const publicFolderPath = join(process.cwd(), "./public");
 server.use(Express.static(publicFolderPath));
 
 // **************************************** MIDDLEWARES *****************************************
-server.use(cors());
+const whitelist = [process.env.FE_DEV_URL];
+server.use(
+  cors({
+    origin: (currentOrigin, corsNext) => {
+      if (!currentOrigin || whitelist.indexOf(currentOrigin) !== -1) {
+        corsNext(null, true);
+      } else {
+        corsNext(
+          createHttpError(
+            400,
+            `Origin ${currentOrigin} is not in the whitelist!`
+          )
+        );
+      }
+    },
+  })
+);
 server.use(Express.json());
 
 // ****************************************** ENDPOINTS *****************************************
