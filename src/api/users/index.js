@@ -16,6 +16,9 @@ import UsersModel from "./model.js"
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import multer from "multer";
+import { getPDFReadableStream } from "../../lib/pdf-tools.js";
+import { pipeline } from "stream";
+import fs from "fs-extra"
 
 const usersRouter = express.Router()
 
@@ -108,32 +111,22 @@ usersRouter.post("/:userId/image", cloudinaryUploader, async (req, res, next) =>
 }
 );
 
+// – GET https://yourapi.cyclic.com/api/profile/users/{userId}/CV  Generates and download a PDF with the CV of the user (details, image, experiences)
 
+usersRouter.get("/:userId/CV", async (req, res, next) => {
+    try {
+        res.setHeader("Content-Disposition", "attachment; filename=CV.pdf")
+        const users = await UsersModel.findById(req.params.userId)
+        const source = getPDFReadableStream(users[0])
+        const destination = res
 
-
-
-
-
-
-
-//************************
-
-// medias/:id/pdf
-//Export single media data as PDF
-// mediasRouter.get("/:mediaId/pdf", async (req, res, next) => {
-//     try {
-//         res.setHeader("Content-Disposition", "attachment; filename=movie.pdf")
-//         const medias = await getMedias()
-//         const source = getPDFReadableStream(medias[0])
-//         const destination = res
-
-//         pipeline(source, destination, err => {
-//             if (err) console.log(err)
-//         })
-//     } catch (error) {
-//         next(error)
-//     }
-// })
+        pipeline(source, destination, err => {
+            if (err) console.log(err)
+        })
+    } catch (error) {
+        next(error)
+    }
+})
 
 // mediasRouter.get("/:mediaId/asyncPDF", async (req, res, next) => {
 //     try {
