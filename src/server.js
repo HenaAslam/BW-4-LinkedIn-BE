@@ -10,6 +10,7 @@ import {
 } from "./errorHandlers.js";
 import postRouter from "./api/posts/index.js";
 import usersRouter from "./api/users/index.js";
+import mongoose from "mongoose";
 
 const server = Express();
 const port = process.env.PORT || 3001;
