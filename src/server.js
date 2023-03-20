@@ -1,8 +1,8 @@
 import { join } from "path"
+import experiencesRouter from "./api/experiences/index.js";
 import Express from "express";
 import listEndpoints from "express-list-endpoints";
 import cors from "cors";
-import mongoose from "mongoose";
 import {
     badRequestHandler,
     notFoundHandler,
@@ -18,10 +18,27 @@ const publicFolderPath = join(process.cwd(), "./public");
 server.use(Express.static(publicFolderPath));
 
 // **************************************** MIDDLEWARES *****************************************
-server.use(cors());
+const whitelist = [process.env.FE_DEV_URL];
+server.use(
+  cors({
+    origin: (currentOrigin, corsNext) => {
+      if (!currentOrigin || whitelist.indexOf(currentOrigin) !== -1) {
+        corsNext(null, true);
+      } else {
+        corsNext(
+          createHttpError(
+            400,
+            `Origin ${currentOrigin} is not in the whitelist!`
+          )
+        );
+      }
+    },
+  })
+);
 server.use(Express.json());
 
 // ****************************************** ENDPOINTS *****************************************
+server.use("/users", experiencesRouter)
 
 server.use("/posts", postRouter);
 server.use("/users", usersRouter);
