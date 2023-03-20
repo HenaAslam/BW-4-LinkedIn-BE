@@ -14,8 +14,7 @@ export const getPDFReadableStream = (user) => {
 
     const docDefinition = {
 
-        content: [UsersModel.surname,
-            // UsersModel.email, UsersModel.bio, UsersModel.title, UsersModel.bio, UsersModel.area, UsersModel.image
+        content: [user.name, user.surname, user.email, user.title, user.bio, user.area, user.image
             //, user.experience 
         ],
         defaultStyle: {
@@ -23,7 +22,7 @@ export const getPDFReadableStream = (user) => {
         }
     }
 
-    console.log("USER:", user)
+    // console.log("USER:", user)
 
     const pdfReadableStream = printer.createPdfKitDocument(docDefinition, {})
     pdfReadableStream.end()

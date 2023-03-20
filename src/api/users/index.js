@@ -117,7 +117,7 @@ usersRouter.get("/:userId/CV", async (req, res, next) => {
     try {
         res.setHeader("Content-Disposition", "attachment; filename=CV.pdf")
         const users = await UsersModel.findById(req.params.userId)
-        const source = getPDFReadableStream(users[0])
+        const source = getPDFReadableStream(users)
         const destination = res
 
         pipeline(source, destination, err => {
@@ -127,15 +127,5 @@ usersRouter.get("/:userId/CV", async (req, res, next) => {
         next(error)
     }
 })
-
-// mediasRouter.get("/:mediaId/asyncPDF", async (req, res, next) => {
-//     try {
-//         const medias = await getMedias()
-//         await asyncPDFGeneration(medias[1])
-//         res.send({ message: "PDF GENERATED CORRECTLY" })
-//     } catch (error) {
-//         next(error)
-//     }
-// })
 
 export default usersRouter
