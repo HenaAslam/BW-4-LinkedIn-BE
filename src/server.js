@@ -1,30 +1,35 @@
-import Express from "express"
-import listEndpoints from "express-list-endpoints"
-import cors from "cors"
-import mongoose from "mongoose"
-import { badRequestHandler, notFoundHandler, genericErrorHandler } from "./errorHandlers.js"
+import Express from "express";
+import listEndpoints from "express-list-endpoints";
+import cors from "cors";
+import mongoose from "mongoose";
+import {
+  badRequestHandler,
+  notFoundHandler,
+  genericErrorHandler,
+} from "./errorHandlers.js";
+import postRouter from "./api/posts/index.js";
 
-const server = Express()
-const port = process.env.PORT || 3001
+const server = Express();
+const port = process.env.PORT || 3001;
 
 // **************************************** MIDDLEWARES *****************************************
-server.use(cors())
-server.use(Express.json())
+server.use(cors());
+server.use(Express.json());
 
 // ****************************************** ENDPOINTS *****************************************
 
-
+server.use("/posts", postRouter);
 // **************************************** ERROR HANDLERS **************************************
-server.use(badRequestHandler)
-server.use(notFoundHandler)
-server.use(genericErrorHandler)
+server.use(badRequestHandler);
+server.use(notFoundHandler);
+server.use(genericErrorHandler);
 
-mongoose.connect(process.env.MONGO_URL)
+mongoose.connect(process.env.MONGO_URL);
 
 mongoose.connection.on("connected", () => {
-    console.log("✅ Successfully connected to Mongo!")
-    server.listen(port, () => {
-        console.table(listEndpoints(server))
-        console.log(`✅ Server is running on port ${port}`)
-    })
-})
+  console.log("✅ Successfully connected to Mongo!");
+  server.listen(port, () => {
+    console.table(listEndpoints(server));
+    console.log(`✅ Server is running on port ${port}`);
+  });
+});
