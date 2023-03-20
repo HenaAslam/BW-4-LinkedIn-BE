@@ -10,6 +10,7 @@ import {
 } from "./errorHandlers.js";
 import postRouter from "./api/posts/index.js";
 import usersRouter from "./api/users/index.js";
+import mongoose from "mongoose";
 
 const server = Express();
 const port = process.env.PORT || 3001;
@@ -20,20 +21,20 @@ server.use(Express.static(publicFolderPath));
 // **************************************** MIDDLEWARES *****************************************
 const whitelist = [process.env.FE_DEV_URL];
 server.use(
-  cors({
-    origin: (currentOrigin, corsNext) => {
-      if (!currentOrigin || whitelist.indexOf(currentOrigin) !== -1) {
-        corsNext(null, true);
-      } else {
-        corsNext(
-          createHttpError(
-            400,
-            `Origin ${currentOrigin} is not in the whitelist!`
-          )
-        );
-      }
-    },
-  })
+    cors({
+        origin: (currentOrigin, corsNext) => {
+            if (!currentOrigin || whitelist.indexOf(currentOrigin) !== -1) {
+                corsNext(null, true);
+            } else {
+                corsNext(
+                    createHttpError(
+                        400,
+                        `Origin ${currentOrigin} is not in the whitelist!`
+                    )
+                );
+            }
+        },
+    })
 );
 server.use(Express.json());
 
