@@ -9,6 +9,8 @@ import {
 } from "./errorHandlers.js";
 import postRouter from "./api/posts/index.js";
 
+import usersRouter from "./api/users/index.js";
+
 const server = Express();
 const port = process.env.PORT || 3001;
 
@@ -19,6 +21,8 @@ server.use(Express.json());
 // ****************************************** ENDPOINTS *****************************************
 
 server.use("/posts", postRouter);
+server.use("/users", usersRouter);
+
 // **************************************** ERROR HANDLERS **************************************
 server.use(badRequestHandler);
 server.use(notFoundHandler);
