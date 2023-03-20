@@ -4,15 +4,18 @@
 
 // DONE – POST https://yourapi.cyclic.com/api/users/  Registers a new user with all his details
 
-// – PUT https://yourapi.cyclic.com/api/users/{userId}  Update current user profile details
+// DONE – PUT https://yourapi.cyclic.com/api/users/{userId}  Update current user profile details
 
-// – POST https://yourapi.cyclic.com/api/users/{userId}/image  Replace user profile image
+// DONE – POST https://yourapi.cyclic.com/api/users/{userId}/image  Replace user profile image
 
 // – GET https://yourapi.cyclic.com/api/profile/users/{userId}/CV  Generates and download a PDF with the CV of the user (details, image, experiences)
 
 import express from "express"
 import createHttpError from "http-errors"
 import UsersModel from "./model.js"
+import { v2 as cloudinary } from "cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import multer from "multer";
 
 const usersRouter = express.Router()
 
@@ -78,5 +81,68 @@ usersRouter.delete("/:userId", async (req, res, next) => {
     }
 })
 
+// – POST https://yourapi.cyclic.com/api/users/{userId}/image  Replace user profile image
+
+const cloudinaryUploader = multer({ storage: new CloudinaryStorage({ cloudinary, params: { folder: "users/image", }, }), }).single("image");
+
+usersRouter.post("/:userId/image", cloudinaryUploader, async (req, res, next) => {
+    try {
+        if (req.file) {
+            console.log("FILE:", req.file);
+            const user = await UsersModel.findById(req.params.userId);
+            if (user) {
+                user.image = req.file.path;
+                await user.save();
+                res.send("Image successfully uploaded!");
+            } else {
+                next(
+                    createHttpError(404, `User with id ${req.params.userId} not found!`)
+                );
+            }
+        } else {
+            next(createHttpError(400, "Error in uploading the image"));
+        }
+    } catch (error) {
+        next(error);
+    }
+}
+);
+
+
+
+
+
+
+
+
+
+//************************
+
+// medias/:id/pdf
+//Export single media data as PDF
+// mediasRouter.get("/:mediaId/pdf", async (req, res, next) => {
+//     try {
+//         res.setHeader("Content-Disposition", "attachment; filename=movie.pdf")
+//         const medias = await getMedias()
+//         const source = getPDFReadableStream(medias[0])
+//         const destination = res
+
+//         pipeline(source, destination, err => {
+//             if (err) console.log(err)
+//         })
+//     } catch (error) {
+//         next(error)
+//     }
+// })
+
+// mediasRouter.get("/:mediaId/asyncPDF", async (req, res, next) => {
+//     try {
+//         const medias = await getMedias()
+//         await asyncPDFGeneration(medias[1])
+//         res.send({ message: "PDF GENERATED CORRECTLY" })
+//     } catch (error) {
+//         next(error)
+//     }
+// })
 
 export default usersRouter

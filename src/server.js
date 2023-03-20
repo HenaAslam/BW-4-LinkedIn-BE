@@ -1,12 +1,16 @@
 import Express from "express"
 import listEndpoints from "express-list-endpoints"
 import cors from "cors"
+import { join } from "path"
 import mongoose from "mongoose"
 import { badRequestHandler, notFoundHandler, genericErrorHandler } from "./errorHandlers.js"
 import usersRouter from "./api/users/index.js"
 
 const server = Express()
 const port = process.env.PORT || 3001
+
+const publicFolderPath = join(process.cwd(), "./public");
+server.use(Express.static(publicFolderPath));
 
 // **************************************** MIDDLEWARES *****************************************
 server.use(cors())
