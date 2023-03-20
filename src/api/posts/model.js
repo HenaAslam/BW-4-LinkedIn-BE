@@ -5,7 +5,7 @@ const { Schema, model } = mongoose;
 const postSchema = new Schema(
   {
     text: { type: String, required: true },
-    image: { type: String, default: "http://placekitten.com/g/200/300" },
+    image: { type: String, default: "" },
     user: { type: Schema.Types.ObjectId, ref: "User" },
   },
   {
