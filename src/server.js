@@ -3,6 +3,7 @@ import listEndpoints from "express-list-endpoints"
 import cors from "cors"
 import mongoose from "mongoose"
 import { badRequestHandler, notFoundHandler, genericErrorHandler } from "./errorHandlers.js"
+import experiencesRouter from "./api/experiences/index.js";
 
 const server = Express()
 const port = process.env.PORT || 3001
@@ -12,7 +13,7 @@ server.use(cors())
 server.use(Express.json())
 
 // ****************************************** ENDPOINTS *****************************************
-
+server.use("/users", experiencesRouter)
 
 // **************************************** ERROR HANDLERS **************************************
 server.use(badRequestHandler)
