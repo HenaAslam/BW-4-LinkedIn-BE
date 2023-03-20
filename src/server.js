@@ -1,10 +1,10 @@
-import { join } from "path"
-import mongoose from "mongoose"
-import usersRouter from "./api/users/index.js"
+import { join } from "path";
+import mongoose from "mongoose";
+
 import Express from "express";
 import listEndpoints from "express-list-endpoints";
 import cors from "cors";
-import mongoose from "mongoose";
+
 import {
   badRequestHandler,
   notFoundHandler,
