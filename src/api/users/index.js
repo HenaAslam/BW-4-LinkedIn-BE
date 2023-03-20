@@ -1,8 +1,8 @@
-// – GET https://yourapi.cyclic.com/api/users/ Retrieves list of users
+// DONE – GET https://yourapi.cyclic.com/api/users/ Retrieves list of users
 
-// – GET https://yourapi.cyclic.com/api/users/{userId}  Retrieves the user with userId = {userId}
+// DONE – GET https://yourapi.cyclic.com/api/users/{userId}  Retrieves the user with userId = {userId}
 
-// – POST https://yourapi.cyclic.com/api/users/  Registers a new user with all his details
+// DONE – POST https://yourapi.cyclic.com/api/users/  Registers a new user with all his details
 
 // – PUT https://yourapi.cyclic.com/api/users/{userId}  Update current user profile details
 
@@ -40,6 +40,23 @@ usersRouter.get("/:userId", async (req, res, next) => {
         const user = await UsersModel.findById(req.params.userId)
         if (user) {
             res.send(user)
+        } else {
+            next(createHttpError(404, `User with id ${req.params.userId} not found!`))
+        }
+    } catch (error) {
+        next(error)
+    }
+})
+
+usersRouter.put("/:userId", async (req, res, next) => {
+    try {
+        const updatedUser = await UsersModel.findByIdAndUpdate(
+            req.params.userId,
+            req.body,
+            { new: true, runValidators: true }
+        )
+        if (updatedUser) {
+            res.send(updatedUser)
         } else {
             next(createHttpError(404, `User with id ${req.params.userId} not found!`))
         }
