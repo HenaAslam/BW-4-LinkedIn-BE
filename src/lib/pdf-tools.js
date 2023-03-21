@@ -1,5 +1,5 @@
 import PdfPrinter from "pdfmake";
-import UsersModel from "../api/users/model.js";
+// import userModel from "../api/users/model";
 import imageToBase64 from "image-to-base64";
 
 export const getPDFReadableStream = async (user) => {
@@ -22,8 +22,7 @@ export const getPDFReadableStream = async (user) => {
       { text: user.title },
       { text: user.bio },
       { text: user.area },
-
-      //, user.experience
+      { text: user.experiences },
       { image: `data:image/jpeg;base64,${imageBase64}`, width: 150 },
     ],
     defaultStyle: {

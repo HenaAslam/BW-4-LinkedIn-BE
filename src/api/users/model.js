@@ -7,6 +7,27 @@ const validateEmail = function (email) {
     return re.test(email)
 };
 
+const experiencesSchema = new Schema(
+    {
+        role: { type: String },
+        company: { type: String },
+        startDate: { type: String },
+        endDate: { type: String }, //could be null
+        description: { type: String },
+        area: { type: String },
+        image: {
+            default:
+                "http://placekitten.com/200/300",
+            type: String,
+        },
+        //users: [usersSchema]
+
+    },
+    { timestamps: true }
+)
+
+// const experiencesModel = model("Experiences", experiencesSchema)
+
 const usersSchema = new Schema(
     {
         name: { type: String, required: true },
@@ -25,6 +46,7 @@ const usersSchema = new Schema(
         title: { type: String },
         area: { type: String },
         image: { type: String },
+        experiences: { type: [experiencesSchema] }
     },
     {
         timestamps: true,
