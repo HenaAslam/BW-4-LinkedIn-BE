@@ -2,10 +2,31 @@ import mongoose from "mongoose";
 
 const { Schema, model } = mongoose
 
+const experiencesSchema = new Schema(
+    {
+        role: { type: String },
+        company: { type: String },
+        startDate: { type: String },
+        endDate: { type: String }, //could be null
+        description: { type: String },
+        area: { type: String },
+        image: {
+            default:
+                "http://placekitten.com/200/300",
+            type: String,
+        },
+        //users: [usersSchema]
+
+    },
+    { timestamps: true }
+)
+
 const validateEmail = function (email) {
     const re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     return re.test(email)
 };
+
+
 
 const usersSchema = new Schema(
     {
@@ -25,6 +46,7 @@ const usersSchema = new Schema(
         title: { type: String },
         area: { type: String },
         image: { type: String },
+        experiences: { type: [experiencesSchema] }
     },
     {
         timestamps: true,
