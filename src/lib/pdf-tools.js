@@ -1,31 +1,40 @@
 import PdfPrinter from "pdfmake";
-import UsersModel from "../api/users/model.js"
+import UsersModel from "../api/users/model.js";
+import imageToBase64 from "image-to-base64";
 
-export const getPDFReadableStream = (user) => {
-    const fonts = {
-        Helvetica: {
-            normal: "Helvetica",
-            bold: "Helvetica-Bold",
-            italics: "Helvetica-Oblique",
-            bolditalics: "Helvetica-BoldOblique",
-        },
-    }
-    const printer = new PdfPrinter(fonts)
+export const getPDFReadableStream = async (user) => {
+  const fonts = {
+    Helvetica: {
+      normal: "Helvetica",
+      bold: "Helvetica-Bold",
+      italics: "Helvetica-Oblique",
+      bolditalics: "Helvetica-BoldOblique",
+    },
+  };
+  const printer = new PdfPrinter(fonts);
+  const imageBase64 = await imageToBase64(user.image);
 
-    const docDefinition = {
+  const docDefinition = {
+    content: [
+      { text: user.name },
+      { text: user.surname },
+      { text: user.email },
+      { text: user.title },
+      { text: user.bio },
+      { text: user.area },
 
-        content: [user.name, user.surname, user.email, user.title, user.bio, user.area, user.image
-            //, user.experience 
-        ],
-        defaultStyle: {
-            font: "Helvetica",
-        }
-    }
+      //, user.experience
+      { image: `data:image/jpeg;base64,${imageBase64}`, width: 150 },
+    ],
+    defaultStyle: {
+      font: "Helvetica",
+    },
+  };
 
-    // console.log("USER:", user)
+  // console.log("USER:", user)
 
-    const pdfReadableStream = printer.createPdfKitDocument(docDefinition, {})
-    pdfReadableStream.end()
+  const pdfReadableStream = printer.createPdfKitDocument(docDefinition, {});
+  pdfReadableStream.end();
 
-    return pdfReadableStream
-}
+  return pdfReadableStream;
+};
