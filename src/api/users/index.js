@@ -131,7 +131,7 @@ usersRouter.get("/:userId/CV", async (req, res, next) => {
   try {
     res.setHeader("Content-Disposition", "attachment; filename=CV.pdf");
     const users = await UsersModel.findById(req.params.userId);
-    const source = getPDFReadableStream(users);
+    const source = await getPDFReadableStream(users);
     const destination = res;
 
     pipeline(source, destination, (err) => {
