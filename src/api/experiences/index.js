@@ -74,13 +74,20 @@ experiencesRouter.get("/:userId/experiences/:expId", async (req, res, next) => {
   try {
     const user = await UsersModel.findById(req.params.userId);
     if (user) {
-      const experience = user.experiences.find(e => e._id.toString() === req.params.expId)
+      const experience = user.experiences.find(
+        (e) => e._id.toString() === req.params.expId
+      );
       if (experience) {
-        console.log("Experience", experience)
-        res.send(experience)
+        console.log("Experience", experience);
+        res.send(experience);
       } else {
-        next(createHttpError(404, `Experience with id ${req.params.expId} was not found!`))
-      };
+        next(
+          createHttpError(
+            404,
+            `Experience with id ${req.params.expId} was not found!`
+          )
+        );
+      }
     } else {
       next(
         createHttpError(
@@ -89,7 +96,6 @@ experiencesRouter.get("/:userId/experiences/:expId", async (req, res, next) => {
         )
       );
     }
-
   } catch (error) {
     next(error);
   }
@@ -97,18 +103,22 @@ experiencesRouter.get("/:userId/experiences/:expId", async (req, res, next) => {
 
 experiencesRouter.put("/:userId/experiences/:expId", async (req, res, next) => {
   try {
-    const user = await UsersModel.findById(
-      req.params.userId,
-    );
+    const user = await UsersModel.findById(req.params.userId);
     if (user) {
-      const index = user.experiences.findIndex(e => e._id.toString() === req.params.expId)
+      const index = user.experiences.findIndex(
+        (e) => e._id.toString() === req.params.expId
+      );
       if (index !== -1) {
-        user.experiences[index] = { ...user.experiences[index].toObject(), ...req.body }
-        await user.save()
-        res.send(user.experiences[index])
-      }
-      else {
-        next(createHttpError(404, `User with id ${req.params.userId} not found!`))
+        user.experiences[index] = {
+          ...user.experiences[index].toObject(),
+          ...req.body,
+        };
+        await user.save();
+        res.send(user.experiences[index]);
+      } else {
+        next(
+          createHttpError(404, `User with id ${req.params.userId} not found!`)
+        );
       }
     } else {
       next(
@@ -164,11 +174,16 @@ experiencesRouter.post(
     try {
       const user = await UsersModel.findById(req.params.userId);
       if (user) {
-        const index = user.experiences.findIndex(e => e._id.toString() === req.params.expId)
+        const index = user.experiences.findIndex(
+          (e) => e._id.toString() === req.params.expId
+        );
         if (index !== -1) {
-          user.experiences[index] = { ...user.experiences[index].toObject(), image: req.file.path }
-          await user.save()
-          res.send(user.experiences[index])
+          user.experiences[index] = {
+            ...user.experiences[index].toObject(),
+            image: req.file.path,
+          };
+          await user.save();
+          res.send(user.experiences[index]);
         }
         await user.save();
       } else {
@@ -182,6 +197,7 @@ experiencesRouter.post(
     } catch (error) {
       next(error);
     }
-  });
+  }
+);
 
 export default experiencesRouter;
