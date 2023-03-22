@@ -170,6 +170,27 @@ postRouter.get("/:postId/comments", async (req, res, next) => {
   }
 });
 
+postRouter.put("/:postId/comments/:commentId", async (req, res, next) => {
+  try {
+    const post = await postModel.findById(req.params.postId);
+    if (post) {
+      const index = post.comments.findIndex(c => c._id.toString() === req.params.commentId)
+      if (index !== -1) {
+        post.comments[index] = { ...post.comments[index].toObject(), ...req.body }
+        await post.save()
+        res.send(post.comments[index])
+      }
+      else {
+        next(createHttpError(404, `Post with id ${req.params.postId} not found!`))
+      }
+    } else {
+      next(createHttpError(404, `Comment with id ${req.params.commentId} not found!`))
+    }
+  } catch (error) {
+    next(error)
+  }
+})
+
 postRouter.delete("/:postId/comments/:commentId", async (req, res, next) => {
   try {
     const updatedPost = await postModel.findByIdAndUpdate(
