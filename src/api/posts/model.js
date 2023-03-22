@@ -16,6 +16,7 @@ const postSchema = new Schema(
     image: { type: String, default: "" },
     user: [{ type: Schema.Types.ObjectId, ref: "User" }],
     comments: [commentSchema],
+    likes: [{ type: Schema.Types.ObjectId, ref: "User" }]
   },
   {
     timestamps: true,
