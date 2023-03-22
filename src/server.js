@@ -11,6 +11,7 @@ import {
 import postRouter from "./api/posts/index.js";
 import usersRouter from "./api/users/index.js";
 import mongoose from "mongoose";
+import createHttpError from "http-errors";
 
 const server = Express();
 const port = process.env.PORT || 3001;
@@ -19,7 +20,7 @@ const publicFolderPath = join(process.cwd(), "./public");
 server.use(Express.static(publicFolderPath));
 
 // **************************************** MIDDLEWARES *****************************************
-const whitelist = [process.env.FE_DEV_URL];
+const whitelist = [process.env.FE_DEV_URL, process.env.FE_PROD_URL];
 server.use(
     cors({
         origin: (currentOrigin, corsNext) => {
