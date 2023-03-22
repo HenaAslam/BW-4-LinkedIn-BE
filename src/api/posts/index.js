@@ -186,4 +186,39 @@ postRouter.delete("/:postId/comments/:commentId", async (req, res, next) => {
     next(error);
   }
 });
+
+postRouter.post("/:postId/like", async (req, res, next) => {
+  try {
+    const post = await postModel.findById(req.params.postId);
+    const { userId } = req.body;
+    if (!post) {
+      return next(
+        createHttpError(404, `Post with id ${req.params.postId} not found!`)
+      );
+    }
+    const userWhoLiked = await UsersModel.findById(userId);
+    if (!userWhoLiked) {
+      return next(
+        createHttpError(404, `User with id ${req.params.userId} not found!`)
+      );
+    }
+    if (post.likes.includes(userId)) {
+      const updatedPost = await postModel.findByIdAndUpdate(
+        { _id: req.params.postId },
+        { $pull: { likes: userId } },
+        { new: true, runValidators: true }
+      );
+      res.send(updatedPost);
+    } else {
+      const updatedPost = await postModel.findByIdAndUpdate(
+        { _id: req.params.postId },
+        { $push: { likes: userId } },
+        { new: true, runValidators: true }
+      );
+      res.send(updatedPost);
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 export default postRouter;
