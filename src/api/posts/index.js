@@ -241,14 +241,14 @@ postRouter.post("/:postId/like", async (req, res, next) => {
         { $pull: { likes: userId } },
         { new: true, runValidators: true }
       );
-      res.send(updatedPost);
+      res.send({ post: updatedPost, numberOfLikes: updatedPost.likes.length });
     } else {
       const updatedPost = await postModel.findByIdAndUpdate(
         { _id: req.params.postId },
         { $push: { likes: userId } },
         { new: true, runValidators: true }
       );
-      res.send(updatedPost);
+      res.send({ post: updatedPost, numberOfLikes: updatedPost.likes.length });
     }
   } catch (error) {
     next(error);
