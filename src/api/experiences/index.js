@@ -15,7 +15,7 @@ const experiencesRouter = express.Router();
 experiencesRouter.get("/:userId/experiences/csv", async (req, res, next) => {
   try {
     const user = await UsersModel.findById(req.params.userId);
-    console.log(req.params.userId);
+
     res.setHeader(
       "Content-Disposition",
       "attachment; filename=experiences.csv"
@@ -23,6 +23,7 @@ experiencesRouter.get("/:userId/experiences/csv", async (req, res, next) => {
     const source = JSON.stringify(user.experiences);
     const transform = new Transform({ fields: ["role", "company", "image"] });
     const destination = res;
+
     pipeline(source, transform, destination, (err) => {
       if (err) console.log(err);
     });

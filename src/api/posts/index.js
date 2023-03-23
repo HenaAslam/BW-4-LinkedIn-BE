@@ -222,8 +222,9 @@ postRouter.delete("/:postId/comments/:commentId", async (req, res, next) => {
 
 postRouter.post("/:postId/like", async (req, res, next) => {
   try {
-    const post = await postModel.findById(req.params.postId);
     const { userId } = req.body;
+    const post = await postModel.findById(req.params.postId);
+
     if (!post) {
       return next(
         createHttpError(404, `Post with id ${req.params.postId} not found!`)
@@ -246,7 +247,7 @@ postRouter.post("/:postId/like", async (req, res, next) => {
       const updatedPost = await postModel.findByIdAndUpdate(
         { _id: req.params.postId },
         { $push: { likes: userId } },
-        { new: true, runValidators: true }
+        { new: true, runValidators: true, upsert: true }
       );
       res.send({ post: updatedPost, numberOfLikes: updatedPost.likes.length });
     }
@@ -254,4 +255,5 @@ postRouter.post("/:postId/like", async (req, res, next) => {
     next(error);
   }
 });
+
 export default postRouter;
