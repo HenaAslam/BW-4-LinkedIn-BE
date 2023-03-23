@@ -11,6 +11,7 @@ import {
 import postRouter from "./api/posts/index.js";
 import usersRouter from "./api/users/index.js";
 import mongoose from "mongoose";
+import createHttpError from "http-errors";
 
 const server = Express();
 const port = process.env.PORT || 3001;
