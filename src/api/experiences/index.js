@@ -15,7 +15,7 @@ const experiencesRouter = express.Router();
 experiencesRouter.get("/:userId/experiences/csv", async (req, res, next) => {
   try {
     const user = await UsersModel.findById(req.params.userId);
-    console.log(req.params.userId);
+
     res.setHeader(
       "Content-Disposition",
       "attachment; filename=experiences.csv"
