@@ -33,6 +33,10 @@ postRouter.get("/", async (req, res, next) => {
       .populate({
         path: "user",
         select: "_id name surname image ",
+      })
+      .populate({
+        path: "comments.user",
+        select: "name surname",
       });
 
     const total = await postModel.countDocuments(mongoQuery.criteria);
