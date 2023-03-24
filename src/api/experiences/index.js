@@ -21,7 +21,7 @@ experiencesRouter.get("/:userId/experiences/csv", async (req, res, next) => {
       "attachment; filename=experiences.csv"
     );
     const source = JSON.stringify(user.experiences);
-    const transform = new Transform({ fields: ["role", "company", "image"] });
+    const transform = new Transform({ fields: ["role", "company", "image", "startDate", "endDate", "description", "area" ] });
     const destination = res;
 
     pipeline(source, transform, destination, (err) => {
