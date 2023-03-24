@@ -206,8 +206,8 @@ usersRouter.put(
             const receiver = await UsersModel.findByIdAndUpdate(
               req.params.senderId,
               {
-                $push: { friends: req.params.senderId },
-                $pull: { pending: req.params.senderId },
+                $push: { friends: req.params.receiverId },
+                $pull: { pending: req.params.receiverId },
               },
 
               { new: true, runValidators: true }
@@ -215,8 +215,8 @@ usersRouter.put(
             const sender = await UsersModel.findByIdAndUpdate(
               req.params.receiverId,
               {
-                $push: { friends: req.params.receiverId },
-                $pull: { send: req.params.receiverId },
+                $push: { friends: req.params.senderId },
+                $pull: { send: req.params.senderId },
               },
 
               { new: true, runValidators: true }
@@ -228,20 +228,6 @@ usersRouter.put(
               sendersFriendsArray: sender.friends,
               receiversFriendsArray: receiver.friends,
             });
-          } else {
-            const receiver = await UsersModel.findByIdAndUpdate(
-              req.params.senderId,
-              { $pull: { friends: req.params.receiverId } },
-
-              { new: true, runValidators: true }
-            );
-            const sender = await UsersModel.findByIdAndUpdate(
-              req.params.receiverId,
-              { $pull: { friends: req.params.senderId } },
-
-              { new: true, runValidators: true }
-            );
-            res.send("You are no more Friends");
           }
         } else {
           res.send("Send a request first please");
