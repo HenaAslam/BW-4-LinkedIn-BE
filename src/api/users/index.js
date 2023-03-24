@@ -141,5 +141,57 @@ usersRouter.get("/:userId/CV", async (req, res, next) => {
     next(error);
   }
 });
+//sending a new request
+usersRouter.post(
+  "/:senderId/sendRequest/:receiverId",
+  async (req, res, next) => {
+    try {
+      const sender = await UsersModel.findById(req.params.senderId);
+      const receiver = await UsersModel.findById(req.params.receiverId);
+
+      if (!sender) {
+        return next(
+          createHttpError(404, `user with id ${req.params.senderId} not found!`)
+        );
+      }
+      if (!receiver) {
+        return next(
+          createHttpError(
+            404,
+            `user with id ${req.params.receiverId} not found!`
+          )
+        );
+      }
+
+      if (sender.friends.includes(receiver)) {
+        res.send("Cannot send the request, you are already friends");
+      } else {
+        console.log(sender._id, receiver.pending);
+        if (receiver.pending.includes(sender._id)) {
+          res.send("You've already sent the friend request and its pending");
+        } else {
+          const updatedSender = await UsersModel.findByIdAndUpdate(
+            { _id: req.params.senderId },
+            { $push: { send: receiver } },
+            { new: true, runValidators: true, upsert: true }
+          );
+          const updatedReceiver = await UsersModel.findByIdAndUpdate(
+            { _id: req.params.receiverId },
+            { $push: { pending: sender } },
+            { new: true, runValidators: true, upsert: true }
+          );
+          res.send({
+            senderSendArray: updatedSender.send,
+            receiverPendingArray: updatedReceiver.pending,
+            sendersFriendsArray: updatedSender.friends,
+            receiversFriendsArray: updatedReceiver.friends,
+          });
+        }
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 export default usersRouter;
