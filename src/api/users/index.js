@@ -166,10 +166,11 @@ usersRouter.post(
       if (sender.friends.includes(receiver)) {
         res.send("Cannot send the request, you are already friends");
       } else {
-        console.log(sender._id, receiver.pending);
+        // console.log(sender._id, receiver.pending);
         if (receiver.pending.includes(sender._id)) {
           res.send("You've already sent the friend request and its pending");
         } else {
+          console.log(sender, receiver);
           const updatedSender = await UsersModel.findByIdAndUpdate(
             { _id: req.params.senderId },
             { $push: { send: receiver } },
@@ -194,4 +195,61 @@ usersRouter.post(
   }
 );
 
+usersRouter.put(
+  "/:senderId/acceptRequest/:receiverId",
+  async (req, res, next) => {
+    try {
+      const sen = await UsersModel.findById(req.params.senderId);
+      if (sen) {
+        if (!sen.pending.includes(req.params.receiverId.toString())) {
+          if (!sen.friends.includes(req.params.receiverId.toString())) {
+            const receiver = await UsersModel.findByIdAndUpdate(
+              req.params.senderId,
+              {
+                $push: { friends: req.params.senderId },
+                $pull: { pending: req.params.senderId },
+              },
+
+              { new: true, runValidators: true }
+            );
+            const sender = await UsersModel.findByIdAndUpdate(
+              req.params.receiverId,
+              {
+                $push: { friends: req.params.receiverId },
+                $pull: { send: req.params.receiverId },
+              },
+
+              { new: true, runValidators: true }
+            );
+            res.send({
+              accepted: "accepted",
+              senderSendArray: sender.send,
+              receiverPendingArray: receiver.pending,
+              sendersFriendsArray: sender.friends,
+              receiversFriendsArray: receiver.friends,
+            });
+          } else {
+            const receiver = await UsersModel.findByIdAndUpdate(
+              req.params.senderId,
+              { $pull: { friends: req.params.receiverId } },
+
+              { new: true, runValidators: true }
+            );
+            const sender = await UsersModel.findByIdAndUpdate(
+              req.params.receiverId,
+              { $pull: { friends: req.params.senderId } },
+
+              { new: true, runValidators: true }
+            );
+            res.send("You are no more Friends");
+          }
+        } else {
+          res.send("Send a request first please");
+        }
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 export default usersRouter;
